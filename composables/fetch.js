@@ -11,7 +11,7 @@ export const useMyFetch = (url, options = {}) => {
 }
 export const useAuthFetch = async (url, options = {}) => {
     const res = await useMyFetch(url, options)
-    if (res.error.value && res.error.value.status === 401) {
+    if (res.error.value && res.error.value.statusCode === 401) {
         await logout()
     }
     return res

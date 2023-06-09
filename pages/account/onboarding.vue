@@ -14,6 +14,7 @@ const resendEmail = async () => {
   const { data, error } = await useFetch('/api/account/registration/resend-email/', {
     method: 'POST',
   })
+  console.log(error);
   if (error.value) {
     errorMsg.value = 'Something went wrong. Please try again later.'
   } else {

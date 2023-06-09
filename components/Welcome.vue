@@ -11,6 +11,7 @@
         </div>
       </v-col>
     </v-row>
+    
     <v-row>
       <v-col cols="12" md="10" offset-md="1">
         <v-row>

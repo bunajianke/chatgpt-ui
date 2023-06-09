@@ -1,6 +1,7 @@
+import Cookies from 'js-cookie'
 
 export const getDefaultConversationData = () => {
-    const { $i18n } = useNuxtApp()
+    // const { $i18n } = useNuxtApp()
     return {
         id: null,
         topic: null,
@@ -58,5 +59,10 @@ export const setUser = (userData) => {
 export const logout = () => {
     const user = useUser()
     user.value = null
+    removeCookies('auth')
     return navigateTo('/account/signin');
+}
+
+export function removeCookies(key = '') {
+    return Cookies.remove(key)
 }
