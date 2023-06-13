@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编辑icon</title>
+    <g id="设计稿-深色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1-copy-2" transform="translate(-176.000000, -430.000000)">
+            <g id="7天前" transform="translate(0.000000, 340.000000)">
+                <g id="创建对话-copy-5" transform="translate(0.000000, 73.000000)">
+                    <g id="Group" transform="translate(176.000000, 17.000000)">
+                        <rect id="Rectangle" x="0" y="0" width="16" height="16"></rect>
+                        <line x1="6.59618586" y1="13.3380374" x2="13.5961859" y2="13.3380374" id="Path-5-Copy-4" stroke="#8D8D9F" stroke-width="1.5" stroke-linecap="round"></line>
+                        <path d="M4.70689785,3.6733958 L6.11263871,1.80159888 L6.11263871,1.80159888 L7.50687555,3.66309166 C7.57408014,3.75281879 7.60918141,3.86252751 7.60654283,3.97460094 L7.40087871,12.7101695 C7.39448713,12.9816515 7.17257446,13.1984011 6.90101723,13.1984011 L4.90129433,13.1984011 C4.62515196,13.1984011 4.40129433,12.9745435 4.40129433,12.6984011 C4.40129433,12.6944779 4.40134051,12.6905549 4.40143285,12.6866327 L4.60684218,3.96188614 C4.60929643,3.85764213 4.64428015,3.75677362 4.70689785,3.6733958 Z" id="Rectangle" stroke="#8D8D9F" stroke-width="1.5" stroke-linejoin="round" transform="translate(6.000000, 7.500000) rotate(-144.000000) translate(-6.000000, -7.500000) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
