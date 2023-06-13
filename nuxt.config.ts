@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import path from "path";
-const appName = process.env.NUXT_PUBLIC_APP_NAME ?? "ChatGPT UI";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
+const appName = process.env.NUXT_PUBLIC_APP_NAME ?? "ChatGPT UI";
 export default defineNuxtConfig({
   debug: process.env.NODE_ENV !== "production",
   ssr: process.env.SSR !== "false",
@@ -31,10 +31,15 @@ export default defineNuxtConfig({
   },
   css: [
     "vuetify/styles",
-    "material-design-icons-iconfont/dist/material-design-icons.css",
+    "@mdi/font/css/materialdesignicons.css",
     "highlight.js/styles/panda-syntax-dark.css",
   ],
-  modules: ["@kevinmarrec/nuxt-pwa", "@nuxtjs/color-mode", "@nuxtjs/i18n"],
+  modules: [
+    "@kevinmarrec/nuxt-pwa",
+    "@nuxtjs/color-mode",
+    "@nuxtjs/i18n",
+    "@vueuse/nuxt",
+  ],
   pwa: {
     manifest: {
       name: appName,
