@@ -97,7 +97,7 @@ const setMenuLocation = (index) => {
   }
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .tab-wrapper {
     background-color: #1f2329;
     .tab-item.current {

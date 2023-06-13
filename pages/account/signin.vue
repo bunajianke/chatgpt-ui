@@ -24,13 +24,13 @@
                   clearable
                   :type="passwordInputType"
                   :append-inner-icon="
-                    passwordInputType === 'password'
-                      ? 'visibility'
-                      : 'visibility_off'
+                    passwordInputType === 'password' ? 'mdi-eye' : 'mdi-eye-off'
                   "
                   @click:append-inner="
                     passwordInputType =
-                      passwordInputType === 'password' ? 'text' : 'password'
+                      passwordInputType === 'password'
+                        ? 'mditext'
+                        : 'mdi-form-textbox-password'
                   "
                 ></v-text-field>
               </v-form>

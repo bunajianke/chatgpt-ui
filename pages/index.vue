@@ -74,7 +74,7 @@ onActivated(async () => {
 </script>
 
 <template>
-  <v-app-bar class="custom-app-bar">
+  <v-app-bar v-if="route.params.id" app class="custom-app-bar">
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
     <v-toolbar-title>
@@ -89,7 +89,7 @@ onActivated(async () => {
 
     <v-btn
       :title="$t('newConversation')"
-      icon="add"
+      icon="mdi-plus"
       @click="createNewConversation"
       class="d-md-none ma-3"
     ></v-btn>
@@ -130,7 +130,7 @@ onActivated(async () => {
   }
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .custom-app-bar {
     background-color: #383e47;
   }

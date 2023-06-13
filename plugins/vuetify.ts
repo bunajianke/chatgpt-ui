@@ -1,9 +1,9 @@
 import { createVuetify, ThemeDefinition } from "vuetify";
-import { aliases, md } from "vuetify/iconsets/md";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
 import * as components from "vuetify/components";
 import { md3 } from "vuetify/blueprints";
 
-const NewDark: ThemeDefinition = {
+const dark: ThemeDefinition = {
   dark: true,
   colors: {
     background: "#2c323b",
@@ -21,16 +21,16 @@ export default defineNuxtPlugin((nuxtApp) => {
     ssr: true,
     blueprint: md3,
     icons: {
-      defaultSet: "md",
+      defaultSet: "mdi",
       aliases,
       sets: {
-        md,
+        mdi,
       },
     },
     theme: {
       defaultTheme: "light",
       themes: {
-        NewDark,
+        dark,
       },
     },
     components,

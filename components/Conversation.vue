@@ -250,27 +250,18 @@ onNuxtReady(() => {
       <div
         v-for="(message, index) in conversation.messages"
         :key="index"
-        class="d-flex align-center"
-        :class="message.is_bot ? 'bg-lighten' : ''"
+        :class="message.is_bot ? 'with-bg' : ''"
       >
-        <v-container class="d-flex align-center">
+        <v-container>
           <MsgContent
             :message="message"
             :index="index"
-            :use-prompt="usePrompt"
-            :delete-message="deleteMessage"
-          />
-
-          <MessageActions
-            :message="message"
-            :message-index="index"
             :use-prompt="usePrompt"
             :delete-message="deleteMessage"
             :toggle-message="toggleMessage"
           />
         </v-container>
       </div>
-
       <div ref="grab" class="w-100" style="height: 200px"></div>
     </div>
   </div>
@@ -365,11 +356,13 @@ onNuxtReady(() => {
 </template>
 
 <style scoped lang="less">
-.NewDark-mode .bg-lighten {
-  background-color: #383e47;
+.v-theme--dark {
+  .with-bg {
+    background-color: #383e47;
+  }
 }
 .v-theme--light {
-  .bg-lighten {
+  .with-bg {
     background-color: #f7f7f8;
   }
 
@@ -378,7 +371,7 @@ onNuxtReady(() => {
   }
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .footer {
     background: linear-gradient(180deg, #ffffff00 0%, #2c323b 50%);
   }

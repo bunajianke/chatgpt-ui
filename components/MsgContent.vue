@@ -3,6 +3,7 @@ import hljs from "highlight.js";
 import MarkdownIt from "markdown-it";
 import copy from "copy-to-clipboard";
 import mathjax3 from "markdown-it-mathjax3";
+import { useDisplay } from "vuetify";
 
 const md = new MarkdownIt({
   linkify: true,
@@ -31,6 +32,10 @@ const props = defineProps({
   deleteMessage: {
     type: Function,
     required: true,
+  },
+  toggleMessage: {
+    type: Function,
+    required: false,
   },
 });
 
@@ -69,24 +74,37 @@ const bindCopyCodeToButtons = () => {
     });
 };
 
+const { smAndDown } = useDisplay();
+
 onMounted(() => {
   bindCopyCodeToButtons();
 });
 </script>
 
 <template>
-  <v-container :class="{ card_disabled: message.is_disabled }">
-    <div class="message-content d-flex align-start">
-      <div class="msg-avatar">
-        {{ message.is_bot ? " " : "Q" }}
-      </div>
-      <div
-        ref="contentElm"
-        v-html="contentHtml"
-        class="chat-msg-content pa-3"
-      ></div>
+  <div
+    class="message-content d-flex align-start flex-column flex-md-row px-0 py-0 px-md-3 py-md-8"
+    :class="{ card_disabled: message.is_disabled }"
+  >
+    <div class="msg-avatar">
+      {{ message.is_bot ? " " : "Q" }}
     </div>
-  </v-container>
+    <div
+      ref="contentElm"
+      v-html="contentHtml"
+      class="chat-msg-content px-0 pb-2 pt-5 px-md-5 flex-fill pt-md-2"
+    ></div>
+
+    <div class="align-self-start" :class="{ 'float-btn': smAndDown }">
+      <MessageActions
+        :message="message"
+        :message-index="index"
+        :use-prompt="usePrompt"
+        :delete-message="deleteMessage"
+        :toggle-message="toggleMessage"
+      />
+    </div>
+  </div>
 </template>
 
 <style lang="less">
@@ -101,10 +119,7 @@ onMounted(() => {
   text-align: center;
   line-height: 30px;
   font-size: 13px;
-  display: inline-block;
-  position: absolute;
-  left: 0;
-  top: 8px;
+  flex: 0 0 auto;
   color: #fff;
 }
 
@@ -114,17 +129,17 @@ onMounted(() => {
   }
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .msg-avatar {
     background-color: #5195f6;
   }
 }
 
 .chat-msg-content {
-  font-size: 0.875rem !important;
+  // font-size: 0.875rem !important;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.25rem;
-  margin-left: 42px;
 }
 
 .chat-msg-content p,
@@ -203,5 +218,10 @@ onMounted(() => {
 
 .card_disabled {
   opacity: 0.5;
+}
+
+.float-btn {
+  position: absolute;
+  right: 0;
 }
 </style>

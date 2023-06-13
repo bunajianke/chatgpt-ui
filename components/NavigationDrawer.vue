@@ -8,15 +8,14 @@ const keyword = ref("");
 const { $i18n, $settings } = useNuxtApp();
 const colorMode = useColorMode();
 const vtheme = useTheme();
-const { mdAndUp } = useDisplay();
-const drawerPermanent = computed(() => {
-  return mdAndUp.value;
-});
+const { mdAndUp, mobile } = useDisplay();
+const drawerPermanent = ref(false);
+drawerPermanent.value = mdAndUp.value;
 const user = useUser();
 
 const themes = ref([
   { title: $i18n.t("lightMode"), value: "light" },
-  { title: $i18n.t("darkMode"), value: "NewDark" },
+  { title: $i18n.t("darkMode"), value: "dark" },
 ]);
 const setTheme = (theme) => {
   colorMode.preference = theme;
@@ -233,6 +232,11 @@ const loadConversations = async () => {
   loadingConversations.value = true;
   conversations.value = await getConversations();
   loadingConversations.value = false;
+  if (unref(drawer) && unref(mobile)) {
+    setTimeout(() => {
+      drawer.value = false;
+    }, 1000);
+  }
 };
 
 const signOut = async () => {
@@ -249,11 +253,15 @@ onNuxtReady(async () => {
 });
 
 const drawer = useDrawer();
+
+const handleNavigate = async (id) => {
+  await navigateTo(id ? `/${id}` : "/");
+};
 </script>
 
 <template>
   <v-navigation-drawer
-    theme="NewDark"
+    theme="dark"
     v-model="drawer"
     :permanent="drawerPermanent"
     width="300"
@@ -262,9 +270,9 @@ const drawer = useDrawer();
       <v-list>
         <v-list-item :title="user.username" style="padding: 6px 20px">
           <template #subtitle>
-            <div class="pt-1">
+            <div class="pt-1 d-flex align-center">
               <span class="mr-3">点数：34</span>
-              <a>升级会员</a>
+              <v-btn size="x-small" variant="text">升级会员</v-btn>
             </div>
           </template>
 
@@ -282,7 +290,7 @@ const drawer = useDrawer();
                   v-bind="props"
                   size="normal"
                   variant="text"
-                  icon="more_horiz"
+                  icon="mdi-dots-horizontal"
                 ></v-btn>
               </template>
 
@@ -323,7 +331,7 @@ const drawer = useDrawer();
                 v-slot:append
                 v-show="keyword.length"
                 density="compact"
-                icon="clear"
+                icon="mdi-close-circle"
                 variant="text"
                 size="small"
                 color="#fff"
@@ -336,8 +344,8 @@ const drawer = useDrawer();
       </v-list>
     </template>
 
-    <div class="px-4">
-      <v-list>
+    <div class="px-2">
+      <v-list nav>
         <v-list-item v-show="loadingConversations">
           <v-list-item-title class="d-flex justify-center">
             <v-progress-circular indeterminate></v-progress-circular>
@@ -362,7 +370,7 @@ const drawer = useDrawer();
                 "
               >
                 <template #prepend>
-                  <SvgIcon name="chat" style="font-size: 16px"></SvgIcon>
+                  <SvgIcon name="chat" style="font-size: 20px"></SvgIcon>
                 </template>
 
                 <v-text-field
@@ -377,7 +385,7 @@ const drawer = useDrawer();
                 >
                   <template v-slot:append>
                     <v-btn
-                      icon="done"
+                      icon="mdi-check"
                       size="small"
                       variant="text"
                       @click.prevent="updateConversation(conversation.id)"
@@ -395,46 +403,84 @@ const drawer = useDrawer();
               >
                 <v-list-item
                   rounded="rounded"
-                  :to="conversation.id ? `/${conversation.id}` : '/'"
                   v-bind="props"
+                  :active="isHovering || route.params.id == conversation.id"
+                  @click="handleNavigate(conversation.id)"
                 >
                   <template #prepend>
                     <SvgIcon name="chat" style="font-size: 16px"></SvgIcon>
                   </template>
 
-                  <v-list-item-title
-                    style="font-size: 14px; margin-left: 14px"
-                    >{{
-                      conversation.topic && conversation.topic !== ""
-                        ? conversation.topic
-                        : $t("defaultConversationTitle")
-                    }}</v-list-item-title
-                  >
+                  <v-list-item-title style="font-size: 14px; margin-left: 14px">
+                    <div>
+                      {{
+                        conversation?.topic
+                          ? conversation.topic
+                          : $t("defaultConversationTitle")
+                      }}
+                    </div>
+                  </v-list-item-title>
 
                   <template v-slot:append>
-                    <div v-show="isHovering && conversation.id">
+                    <div v-if="mobile" class="px-1">
                       <v-btn
-                        icon="edit"
-                        size="small"
+                        color="#8d8d9f"
+                        v-bind="props"
+                        size="normal"
                         variant="text"
-                        @click.prevent="editConversation(conversation.id)"
                       >
+                        <v-icon icon="mdi-dots-horizontal"></v-icon>
+                        <v-menu activator="parent" open-on-click>
+                          <v-list>
+                            <v-list-item
+                              title="编辑"
+                              @click.prevent="editConversation(conversation.id)"
+                            >
+                            </v-list-item>
+                            <v-list-item
+                              title="分享"
+                              @click.prevent="
+                                exportConversation(conversation.id)
+                              "
+                            >
+                            </v-list-item>
+                            <v-list-item
+                              title="删除"
+                              @click.prevent="
+                                deleteConversation(conversation.id)
+                              "
+                            >
+                            </v-list-item>
+                          </v-list>
+                        </v-menu>
                       </v-btn>
-                      <v-btn
-                        icon="delete"
-                        size="small"
-                        variant="text"
+                    </div>
+                    <div
+                      v-else
+                      v-show="isHovering && conversation.id"
+                      class="px-1"
+                      style="font-size: 17px"
+                    >
+                      <SvgIcon
+                        title="编辑"
+                        name="edit"
+                        @click.prevent="editConversation(conversation.id)"
+                      />
+
+                      <SvgIcon
+                        title="分享"
+                        class="ml-2"
+                        name="download"
+                        @click.prevent="exportConversation(conversation.id)"
+                      />
+
+                      <SvgIcon
+                        title="删除"
+                        class="ml-2"
+                        name="delete"
                         :loading="deletingConversationIndex === conversation.id"
                         @click.prevent="deleteConversation(conversation.id)"
-                      >
-                      </v-btn>
-                      <v-btn
-                        icon="download"
-                        size="small"
-                        variant="text"
-                        @click.prevent="exportConversation(conversation.id)"
-                      >
-                      </v-btn>
+                      />
                     </div>
                   </template>
                 </v-list-item>
@@ -446,19 +492,214 @@ const drawer = useDrawer();
     </div>
 
     <template v-slot:append>
-      <v-expansion-panels style="flex-direction: column">
+      <v-divider
+        :thickness="1"
+        class="title-divider border-opacity-50 mx-4 mt-2"
+      ></v-divider>
+
+      <v-menu location="top center" transition="slide-y-reverse-transition">
+        <template #activator="{ props }">
+          <div v-bind="props" class="w-100 d-flex align-center pa-5">
+            <SvgIcon name="setting" class="mr-3"></SvgIcon>
+            <span class="flex-fill">{{ $t("settingDraw") }}</span>
+            <v-icon
+              class="justify-flex-end"
+              icon="mdi-dots-horizontal"
+            ></v-icon>
+          </div>
+        </template>
+
+        <v-list>
+          <v-list-item prepend-icon="mdi-help-box-outline" @click="signOut">
+            <v-list-item-title>Help & FAQ</v-list-item-title>
+          </v-list-item>
+          <v-divider></v-divider>
+
+          <v-dialog v-model="clearConfirmDialog" persistent>
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-delete-sweep-outline"
+                :title="$t('clearConversations')"
+              ></v-list-item>
+            </template>
+            <v-card>
+              <v-card-title class="text-h5">
+                Are you sure you want to delete all conversations?
+              </v-card-title>
+              <v-card-text
+                >This will be a permanent deletion and cannot be retrieved once
+                deleted. Please proceed with caution.</v-card-text
+              >
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="green-darken-1"
+                  variant="text"
+                  @click="clearConfirmDialog = false"
+                  class="text-none"
+                >
+                  Cancel deletion
+                </v-btn>
+                <v-btn
+                  color="green-darken-1"
+                  variant="text"
+                  @click="clearConversations"
+                  class="text-none"
+                  :loading="deletingConversations"
+                >
+                  Confirm deletion
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <ModelParameters />
+
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" :title="$t('themeMode')">
+                <template v-slot:prepend>
+                  <v-icon icon="mdi-theme-light-dark"></v-icon>
+                </template>
+              </v-list-item>
+            </template>
+            <v-list bg-color="white">
+              <v-list-item
+                v-for="(theme, idx) in themes"
+                :key="idx"
+                @click="setTheme(theme.value)"
+              >
+                <v-list-item-title>{{ theme.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <SettingsLanguages />
+
+          <v-divider></v-divider>
+
+          <v-list-item
+            prepend-icon="mdi-logout-variant"
+            :title="$t('signOut')"
+            @click="signOut"
+          ></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-list style="display: none">
+        <v-menu location="top center">
+          <template v-slot:activator="{ props }">
+            <v-list-item class="px-5" v-bind="props">
+              <template #prepend>
+                <SvgIcon name="setting" class="mr-3"></SvgIcon>
+              </template>
+              <v-list-item-title>{{ $t("settingDraw") }}</v-list-item-title>
+              <template #append>
+                <v-icon icon="mdi-dots-horizontal"></v-icon>
+              </template>
+            </v-list-item>
+          </template>
+
+          <v-list density="compact">
+            <v-list-item prepend-icon="mdi-help-box-outline" @click="signOut">
+              <v-list-item-title>Help & FAQ</v-list-item-title>
+            </v-list-item>
+
+            <v-divider></v-divider>
+
+            <ApiKeyDialog v-if="$settings.open_api_key_setting === 'True'" />
+
+            <v-dialog v-model="clearConfirmDialog" persistent>
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  prepend-icon="mdi-delete-sweep-outline"
+                  :title="$t('clearConversations')"
+                ></v-list-item>
+              </template>
+              <v-card>
+                <v-card-title class="text-h5">
+                  Are you sure you want to delete all conversations?
+                </v-card-title>
+                <v-card-text
+                  >This will be a permanent deletion and cannot be retrieved
+                  once deleted. Please proceed with caution.</v-card-text
+                >
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="green-darken-1"
+                    variant="text"
+                    @click="clearConfirmDialog = false"
+                    class="text-none"
+                  >
+                    Cancel deletion
+                  </v-btn>
+                  <v-btn
+                    color="green-darken-1"
+                    variant="text"
+                    @click="clearConversations"
+                    class="text-none"
+                    :loading="deletingConversations"
+                  >
+                    Confirm deletion
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
+            <ModelParameters />
+
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  rounded="xl"
+                  :title="$t('themeMode')"
+                >
+                  <template v-slot:prepend>
+                    <v-icon icon="mdi-theme-light-dark"></v-icon>
+                  </template>
+                </v-list-item>
+              </template>
+              <v-list bg-color="white">
+                <v-list-item
+                  v-for="(theme, idx) in themes"
+                  :key="idx"
+                  @click="setTheme(theme.value)"
+                >
+                  <v-list-item-title>{{ theme.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <SettingsLanguages />
+
+            <v-divider></v-divider>
+
+            <v-list-item
+              prepend-icon="mdi-logout-variant"
+              :title="$t('signOut')"
+              @click="signOut"
+            ></v-list-item>
+          </v-list>
+        </v-menu>
+      </v-list>
+
+      <!-- <v-expansion-panels style="flex-direction: column">
         <v-expansion-panel :rounded="false">
           <v-expansion-panel-title
             class="with-border-top"
-            expand-icon="more_horiz"
-            collapse-icon="close"
+            expand-icon="mdi-dots-horizontal"
+            collapse-icon="mdi-close"
           >
             <v-divider
               :thickness="1"
               class="title-divider border-opacity-50 mx-4 mt-2"
             ></v-divider>
             <SvgIcon name="setting" class="mr-3"></SvgIcon>
-            {{ $t("settingDraw") }}
+            <span style="font-size: 14px">{{ $t("settingDraw") }}</span>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <div class="px-1">
@@ -468,7 +709,7 @@ const drawer = useDrawer();
                     <v-list-item
                       v-bind="props"
                       rounded="xl"
-                      prepend-icon="delete_forever"
+                      prepend-icon="mdi-delete-sweep-outline"
                       :title="$t('clearConversations')"
                     ></v-list-item>
                   </template>
@@ -505,7 +746,7 @@ const drawer = useDrawer();
 
                 <v-list-item
                   rounded="xl"
-                  prepend-icon="input"
+                  prepend-icon="mdi-import"
                   :title="$t('importConversation')"
                   @click="openImportFileChooser()"
                 ></v-list-item>
@@ -514,9 +755,6 @@ const drawer = useDrawer();
                   v-if="$settings.open_api_key_setting === 'True'"
                 />
 
-                <ModelParameters />
-
-                <!-- 主题 -->
                 <v-menu>
                   <template v-slot:activator="{ props }">
                     <v-list-item
@@ -525,14 +763,7 @@ const drawer = useDrawer();
                       :title="$t('themeMode')"
                     >
                       <template v-slot:prepend>
-                        <v-icon
-                          v-show="$colorMode.value === 'light'"
-                          icon="light_mode"
-                        ></v-icon>
-                        <v-icon
-                          v-show="$colorMode.value !== 'light'"
-                          icon="dark_mode"
-                        ></v-icon>
+                        <v-icon icon="mdi-theme-light-dark"></v-icon>
                       </template>
                     </v-list-item>
                   </template>
@@ -552,7 +783,7 @@ const drawer = useDrawer();
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
-      </v-expansion-panels>
+      </v-expansion-panels> -->
     </template>
   </v-navigation-drawer>
 
@@ -570,6 +801,7 @@ const drawer = useDrawer();
       </v-btn>
     </template>
   </v-snackbar>
+
   <input
     type="file"
     id="import_conversation_input"
@@ -584,9 +816,11 @@ const drawer = useDrawer();
 .v-navigation-drawer__content::-webkit-scrollbar {
   width: 0;
 }
+
 .v-navigation-drawer__content:hover::-webkit-scrollbar {
   width: 6px;
 }
+
 .v-navigation-drawer__content:hover::-webkit-scrollbar-thumb {
   background-color: #999;
   border-radius: 3px;
@@ -610,14 +844,15 @@ const drawer = useDrawer();
 
 .day-label-text {
   font-size: 12px;
-  margin-left: 15px;
+  margin-left: 10px;
   margin-bottom: 10px;
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .search-input {
     background: #2e3135;
   }
+
   .day-label-text {
     color: #a1aab6;
   }
@@ -625,6 +860,7 @@ const drawer = useDrawer();
 
 .v-expansion-panel-title.with-border-top {
   position: relative;
+
   .title-divider {
     position: absolute;
     left: 0;

@@ -8,15 +8,14 @@
     <template v-slot:activator="{ props }">
       <v-list-item
         v-bind="props"
-        rounded="xl"
-        prepend-icon="language"
+        prepend-icon="mdi-translate"
         :title="$t('language')"
       ></v-list-item>
     </template>
     <v-card>
       <v-toolbar>
         <v-btn icon @click="dialog = false">
-          <v-icon icon="close"></v-icon>
+          <v-icon icon="mdi-close"></v-icon>
         </v-btn>
         <v-toolbar-title>{{ $t("language") }}</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -25,12 +24,6 @@
         </v-toolbar-items>
       </v-toolbar>
       <v-list>
-        <!--          <v-list-item-->
-        <!--              title="Use device language"-->
-        <!--              :append-icon="usingDeviceLanguage() ? 'radio_button_checked' : 'radio_button_unchecked'"-->
-        <!--              @click="useDeviceLanguage"-->
-        <!--          >-->
-        <!--          </v-list-item>-->
         <v-list-item
           v-for="l in locales"
           :key="l.code"
@@ -58,9 +51,7 @@ const updateLocale = (lang) => {
 };
 
 const radioIcon = (code) => {
-  return code === locale.value
-    ? "radio_button_checked"
-    : "radio_button_unchecked";
+  return code === locale.value ? "mdi-radiobox-marked" : "mdi-radiobox-blank";
 };
 
 // const useDeviceLanguage = () => {
@@ -68,5 +59,3 @@ const radioIcon = (code) => {
 //   $i18n.setLocaleCookie(undefined)
 // }
 </script>
-
-<style scoped></style>

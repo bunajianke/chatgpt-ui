@@ -9,4 +9,4 @@ export const useConversations = () => useState('conversations', () => [])
 
 export const useUser = () => useState('user', () => null)
 
-export const useDrawer = () => useState('drawer', () => false)
+export const useDrawer = () => useState('drawer', () => true)

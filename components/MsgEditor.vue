@@ -1,6 +1,7 @@
 <script setup>
-import { isMobile } from "is-mobile";
+import { useDisplay } from "vuetify";
 const { $i18n } = useNuxtApp();
+const { mobile } = useDisplay();
 
 const props = defineProps({
   conversation: {
@@ -34,8 +35,8 @@ const regenereateButtonVisible = computed(() => {
 });
 
 const hint = computed(() => {
-  return isMobile()
-    ? ""
+  return mobile.value
+    ? "你想问啥"
     : $i18n.t("pressEnterToSendYourMessageOrShiftEnterToAddANewLine");
 });
 
@@ -86,7 +87,7 @@ const clickSendBtn = () => {
 
 const enterOnly = (event) => {
   event.preventDefault();
-  if (!isMobile()) {
+  if (!mobile.value) {
     send();
   }
 };
@@ -98,14 +99,14 @@ defineExpose({
 
 const toolSelector = ref({
   list: [
-    { title: "Chat", icon: "add", name: "chat", type: 0 },
+    { title: "Chat", icon: "mdi-plus", name: "chat", type: 0 },
     {
       title: "Web Search",
-      icon: "travel_explore",
+      icon: "mdi-search-web",
       name: "web_search",
       type: 100,
     },
-    { title: "ArXiv", icon: "local_library", name: "arxiv", type: 110 },
+    { title: "ArXiv", icon: "mdi-library-outline", name: "arxiv", type: 110 },
   ],
   selected: 0,
 });
@@ -142,7 +143,7 @@ const docDialogCtl = ref({
       <div class="d-flex items-center">
         <v-icon
           v-slot:prependIcon
-          icon="refresh"
+          icon="mdi-refresh"
           style="margin-top: 3px"
           size="small"
         ></v-icon>
@@ -161,7 +162,7 @@ const docDialogCtl = ref({
       <div class="d-flex items-center">
         <v-icon
           v-slot:prependIcon
-          icon="cancel_schedule_send"
+          icon="mdi-close-circle-outline"
           style="margin-top: 3px"
           size="small"
         ></v-icon>
@@ -190,7 +191,7 @@ const docDialogCtl = ref({
           <v-btn
             :disabled="loading"
             variant="text"
-            icon="send"
+            icon="mdi-send"
             title="Send"
             class="ml-3"
             size="large"
@@ -202,11 +203,10 @@ const docDialogCtl = ref({
       <v-btn
         style="margin-left: 16px; width: 50px; height: 50px; min-width: initial"
         title="Tools"
-        class="tool-icon-btn custom-add-btn"
+        class="tool-icon-btn custom-add-btn d-none d-md-inline"
         id="tools_btn"
         rounded="lg"
         variant="plain"
-        :color="$colorMode.preference === 'light' ? '#2bb673' : '#5195f6'"
       >
         <v-icon :icon="getToolIcon()" size="x-large"></v-icon>
       </v-btn>
@@ -222,7 +222,7 @@ const docDialogCtl = ref({
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
           <v-list-item
-            prepend-icon="article"
+            prepend-icon="mdi-file-document-outline"
             @click="docDialogCtl.dialog = true"
           >
             Documents
@@ -251,7 +251,7 @@ const docDialogCtl = ref({
   box-shadow: 0px 0px 10px #0000000d;
 }
 
-.v-theme--NewDark {
+.v-theme--dark {
   .userinputmsg {
     .v-field__overlay {
       background-color: #363e49;

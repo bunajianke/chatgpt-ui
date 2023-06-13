@@ -1,9 +1,9 @@
 <template>
   <div class="welcome-container">
-    <div class="pa-5 text-center">
+    <div class="text-center mt-16 mt-sm-7">
       <CustomTab />
     </div>
-    <div class="greeting">
+    <div class="greeting px-4 px-sm-0">
       <p class="welcome-text">
         ChatPanda - {{ currentModel.name.toUpperCase() }}
       </p>

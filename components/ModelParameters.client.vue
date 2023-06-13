@@ -22,8 +22,7 @@ onNuxtReady(() => {
     <template v-slot:activator="{ props }">
       <v-list-item
         v-bind="props"
-        rounded="xl"
-        prepend-icon="tune"
+        prepend-icon="mdi-tune"
         :title="$t('modelParameters')"
       ></v-list-item>
     </template>
@@ -33,7 +32,7 @@ onNuxtReady(() => {
 
         <v-spacer></v-spacer>
 
-        <v-btn icon="close" @click="dialog = false"></v-btn>
+        <v-btn icon="mdi-close" @click="dialog = false"></v-btn>
       </v-toolbar>
       <v-card-text>
         <v-select
@@ -185,5 +184,3 @@ onNuxtReady(() => {
     </v-card>
   </v-dialog>
 </template>
-
-<style scoped></style>
